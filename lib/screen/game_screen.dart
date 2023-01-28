@@ -11,6 +11,7 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => _GameScreenState();
 }
 
+enum ColorType { text, background, border }
 
 
 class _GameScreenState extends State<GameScreen> {
@@ -43,48 +44,17 @@ class _GameScreenState extends State<GameScreen> {
     return true;
   }
 
-  Color getColorLetter(String letter) {
-    if (!selectedChar
-        .contains(letter.toUpperCase())) {
-      return Colors.white;
-    } else if(selectedChar
-        .contains(letter.toUpperCase()) && word.toUpperCase()
-        .split("")
-        .contains(letter.toUpperCase())) {
-      return const Color(0xFF66BB6A);
+  Color getColor(String letter, ColorType colorType) {
+    bool isSelected = selectedChar.contains(letter.toUpperCase());
+    bool isCorrect = word.toUpperCase().split("").contains(letter.toUpperCase());
 
-    } else {
-      return const Color(0xFFE53935);
-    }
-  }
-
-  Color getBackgroundLetter(String letter) {
-    if (!selectedChar
-        .contains(letter.toUpperCase())) {
-      return Colors.black87;
-    } else if(selectedChar
-        .contains(letter.toUpperCase()) && word.toUpperCase()
-        .split("")
-        .contains(letter.toUpperCase())) {
-      return Colors.transparent;
-
-    } else {
-      return Colors.transparent;
-    }
-  }
-
-  Color getBorderLetter(String letter) {
-    if (!selectedChar
-        .contains(letter.toUpperCase())) {
-      return Colors.black87;
-    } else if(selectedChar
-        .contains(letter.toUpperCase()) && word.toUpperCase()
-        .split("")
-        .contains(letter.toUpperCase())) {
-      return const Color(0xFF66BB6A);
-
-    } else {
-      return const Color(0xFFE53935);
+    switch(colorType){
+      case ColorType.text:
+        return isSelected && isCorrect ? const Color(0xFF66BB6A) : isSelected && !isCorrect ? const Color(0xFFE53935) : Colors.white;
+      case ColorType.background:
+        return isSelected ? Colors.transparent : Colors.black87;
+      case ColorType.border:
+        return isSelected && isCorrect ? const Color(0xFF66BB6A) : isSelected && !isCorrect ? const Color(0xFFE53935) : Colors.black87;
     }
   }
 
@@ -164,15 +134,15 @@ class _GameScreenState extends State<GameScreen> {
                               },
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: getBackgroundLetter(e),
-                                  border:  Border.all(color: getBorderLetter(e), width: 3),
+                                  color: getColor(e, ColorType.background),
+                                  border:  Border.all(color: getColor(e, ColorType.border), width: 3),
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: Center(
                                   child: Text(
                                     e,
                                     style: TextStyle(
-                                        fontSize: 16, fontWeight: FontWeight.bold, color: getColorLetter(e)
+                                        fontSize: 16, fontWeight: FontWeight.bold, color: getColor(e, ColorType.text)
                                   ),
                                 ),
                               )));
