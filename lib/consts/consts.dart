@@ -1,4 +1,9 @@
 
+class GameColors {
+  static const blue = "#2E82EA";
+}
+
+
 class GameUI {
   static const step_0 = "assets/images/step_0.png";
   static const step_1 = "assets/images/step_1.png";
@@ -24,7 +29,12 @@ class GameWords {
     'flutter',
     'hangman',
     'zegarek',
-    'życie'
+    'życie',
+    'agnieszka',
+    'adrianna',
+    'szymon',
+    'dawid',
+    'buldog francuski',
   ];
 }
 

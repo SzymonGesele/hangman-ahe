@@ -9,7 +9,7 @@ Widget letter(String char, bool visible) {
     height: 30,
     decoration: const BoxDecoration(
       border: Border(
-        bottom: BorderSide(color: Colors.white, width: 2.0)
+        bottom: BorderSide(color: Colors.black87, width: 2.0)
       ),
     ),
     child: Visibility(
@@ -19,7 +19,7 @@ Widget letter(String char, bool visible) {
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 18,
-          color: Colors.white
+          color: Colors.black87
         ),
       ),
     ),

@@ -34,7 +34,6 @@ class _GameScreenState extends State<GameScreen> {
   }
 
 
-
   bool userWon() {
     for (String letter in word.toUpperCase().replaceAll(RegExp(r'\s+'), '').split("")) {
       if (!selectedChar.contains(letter)) {
@@ -44,17 +43,64 @@ class _GameScreenState extends State<GameScreen> {
     return true;
   }
 
+  Color getColorLetter(String letter) {
+    if (!selectedChar
+        .contains(letter.toUpperCase())) {
+      return Colors.white;
+    } else if(selectedChar
+        .contains(letter.toUpperCase()) && word.toUpperCase()
+        .split("")
+        .contains(letter.toUpperCase())) {
+      return const Color(0xFF66BB6A);
+
+    } else {
+      return const Color(0xFFE53935);
+    }
+  }
+
+  Color getBackgroundLetter(String letter) {
+    if (!selectedChar
+        .contains(letter.toUpperCase())) {
+      return Colors.black87;
+    } else if(selectedChar
+        .contains(letter.toUpperCase()) && word.toUpperCase()
+        .split("")
+        .contains(letter.toUpperCase())) {
+      return Colors.transparent;
+
+    } else {
+      return Colors.transparent;
+    }
+  }
+
+  Color getBorderLetter(String letter) {
+    if (!selectedChar
+        .contains(letter.toUpperCase())) {
+      return Colors.black87;
+    } else if(selectedChar
+        .contains(letter.toUpperCase()) && word.toUpperCase()
+        .split("")
+        .contains(letter.toUpperCase())) {
+      return const Color(0xFF66BB6A);
+
+    } else {
+      return const Color(0xFFE53935);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
+    return Container(
+      constraints: const BoxConstraints.expand(),
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/images/bg.jpg"), fit: BoxFit.cover)),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
           centerTitle: true,
-          title: const Text("Hangman: The Game"),
+          iconTheme: const IconThemeData(color: Colors.black, size: 25),
+          title: Image.asset('assets/images/logo_small.png', fit: BoxFit.cover, height: 45,),
           elevation: 0.0,
           backgroundColor: Colors.transparent,
         ),
@@ -64,27 +110,12 @@ class _GameScreenState extends State<GameScreen> {
                 flex: 3,
                 child: Column(
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                            flex: 3,
-                            child: Stack(
-                              children: [
-                                figure(steps[tries], tries >= 0 && tries <= 7),
-                              ],
-                            )),
-                        Expanded(
-                          flex: 1,
-                          child: Center(
-                            child: Text(
-                              '${7 - tries}',
-                              style: const TextStyle(fontSize: 24),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    Center(
+                        child: Stack(
+                          children: [
+                            figure(steps[tries], tries >= 0 && tries <= 7),
+                          ],
+                        )),
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -114,8 +145,8 @@ class _GameScreenState extends State<GameScreen> {
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
                         children: characters.split("").map((e) {
-                          return ElevatedButton(
-                              onPressed: selectedChar.contains(e.toUpperCase())
+                          return GestureDetector(
+                              onTap: selectedChar.contains(e.toUpperCase())
                                   ? null
                                   : () {
                                 setState(() {
@@ -131,43 +162,77 @@ class _GameScreenState extends State<GameScreen> {
                                   isWinner = userWon();
                                 });
                               },
-                              style: ButtonStyle(
-                                  shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(10.0)))),
-                              child: Text(
-                                e,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ));
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: getBackgroundLetter(e),
+                                  border:  Border.all(color: getBorderLetter(e), width: 3),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    e,
+                                    style: TextStyle(
+                                        fontSize: 16, fontWeight: FontWeight.bold, color: getColorLetter(e)
+                                  ),
+                                ),
+                              )));
                         }).toList(),
                       ),
                     ))),
             Visibility(
                 visible: tries == 7,
                 child: Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
                             child: Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Padding(
-                                      padding: EdgeInsets.only(left:15, bottom: 20, right: 20, top:10), //apply padding to some sides only
-                                      child: Text("GAME OVER",style: TextStyle(
-                                        fontSize: 20,
-                                      )),
+                                Image.asset("assets/images/error.png", height: 100),
+                                const Text("Przegrałeś...",style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w700,
+                                )),
+                                const SizedBox(height: 15),
+                                const Text("Chcesz się zrewanżować?",style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                )),
+                                const SizedBox(height: 55),
+                                Padding(
+                                  padding: const EdgeInsets.all(35.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const GameScreen()));
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[700],
+                                        borderRadius: BorderRadius.circular(50),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.blue.withOpacity(0.5),
+                                            spreadRadius: -10,
+                                            blurRadius: 40,
+                                            offset: const Offset(0, 12), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          'Zacznij od nowa',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18, // shadows:
+                                          ),
+
+                                        ),
+
+                                      ),
                                     ),
-                                  ],
-                                ),
-                                ElevatedButton(
-                                  child: const Text("Zacznij od nowa"),
-                                  onPressed: () {
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const GameScreen()));                            },
+                                  ),
                                 ),
                               ],
                             )
@@ -178,27 +243,57 @@ class _GameScreenState extends State<GameScreen> {
             Visibility(
                 visible: isWinner,
                 child: Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Container(
                         padding: const EdgeInsets.all(10.0),
                         child: Center(
                             child: Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Padding(
-                                      padding: EdgeInsets.only(left:15, bottom: 20, right: 20, top:10), //apply padding to some sides only
-                                      child: Text("Super, Wygrywasz !",style: TextStyle(
-                                        fontSize: 20,
-                                      )),
+                                Image.asset("assets/images/success.png", height: 100),
+                                const Text("Gratulacje! Wygrałeś.",style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w700,
+                                )),
+                                const SizedBox(height: 15),
+                                const Text("Gotowy na kolejną rundę?",style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                )),
+                                const SizedBox(height: 55),
+                                Padding(
+                                  padding: const EdgeInsets.all(35.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const GameScreen()));
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[700],
+                                        borderRadius: BorderRadius.circular(50),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.blue.withOpacity(0.5),
+                                            spreadRadius: -10,
+                                            blurRadius: 40,
+                                            offset: const Offset(0, 12), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          'Zacznij od nowa',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18, // shadows:
+                                          ),
+
+                                        ),
+
+                                      ),
                                     ),
-                                  ],
-                                ),
-                                ElevatedButton(
-                                  child: const Text("Nowa gra"),
-                                  onPressed: () {
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const GameScreen()));                            },
+                                  ),
                                 ),
                               ],
                             )
