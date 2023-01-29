@@ -26,9 +26,9 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    var words = GameWords.words;
+    List<String> words = GameWords.words;
     var random = Random.secure();
-    var randomIndex = random.nextInt(words.length);
+    int randomIndex = random.nextInt(words.length);
     return setState(() {
       word = words[randomIndex];
     });
@@ -83,7 +83,7 @@ class _GameScreenState extends State<GameScreen> {
                     Center(
                         child: Stack(
                           children: [
-                            figure(steps[tries], tries >= 0 && tries <= 7),
+                            figure(steps[tries]),
                           ],
                         )),
                     Expanded(
